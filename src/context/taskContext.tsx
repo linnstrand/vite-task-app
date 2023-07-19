@@ -1,6 +1,6 @@
 import React from 'react';
 import { Task } from '../models';
-import { useApi, useMockApi } from '../hooks/useApi';
+import { Filter, useMockApi } from '../hooks/useApi';
 
 interface TaskProperties {
   categories: { [key: string]: number };
@@ -9,13 +9,13 @@ interface TaskProperties {
 
 export type TaskContext = {
   tasks: Task[] | undefined;
-  filter: { type: keyof Task; name?: string } | undefined;
+  filter: Filter | undefined;
   sortedOn: string | undefined;
   taskProperties: TaskProperties | undefined;
   editTask: (task: Task) => void;
   addTask: (task: Omit<Task, 'id'>) => void;
   sortTasks: (query?: string) => void;
-  filterTasks: (type: keyof Task, name?: string) => void;
+  filterTasks: (filter: Filter) => void;
   removeTask: (id: number) => void;
 };
 
@@ -23,7 +23,7 @@ export const TaskContext = React.createContext<TaskContext | undefined>(undefine
 
 export const TaskProvider = ({ children }: { children: JSX.Element }) => {
   const [tasks, setTasks] = React.useState<Task[]>();
-  const [filter, setFilter] = React.useState<{ type: keyof Task; name?: string } | undefined>();
+  const [filter, setFilter] = React.useState<Filter | undefined>();
   const [sortedOn, setSortedOn] = React.useState<string | undefined>();
 
   // const { getTasks, updateTask, createTask, deleteTask } = useApi()
@@ -76,8 +76,9 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     newTask && setTasks([newTask, ...(tasks || [])]);
   };
 
-  const filterTasks = async (type: keyof Task, name?: string) => {
-    setFilter({ type, name });
+  const filterTasks = async (query: Filter) => {
+    console.log(query);
+    setFilter(query);
   };
 
   const sortTasks = async (query?: string) => {

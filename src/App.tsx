@@ -18,7 +18,7 @@ import { TaskList } from './components/TaskList';
 import { useTaskContext } from './context/useTaskContext';
 
 function App() {
-  const { tasks, taskProperties, filterTasks } = useTaskContext();
+  const { tasks, taskProperties, filterTasks, filter } = useTaskContext();
   const { openForm } = useFormModal();
 
   const darkTheme = createTheme({
@@ -65,10 +65,15 @@ function App() {
             {taskProperties &&
               Object.keys(taskProperties.statoos).map((t) => (
                 <Chip
-                  onClick={() => filterTasks('status', t)}
+                  variant={t === filter?.status ? 'filled' : 'outlined'}
+                  onClick={() =>
+                    filterTasks({
+                      status: t !== filter?.status ? t : undefined,
+                      category: filter?.category
+                    })
+                  }
                   key={t}
                   label={`${t}: ${taskProperties.statoos[t]}`}
-                  variant="outlined"
                   color="primary"
                 />
               ))}

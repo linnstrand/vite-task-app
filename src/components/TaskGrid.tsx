@@ -12,8 +12,13 @@ export function TaskGrid() {
           <Grid xs={4} key={t}>
             <Button
               key={t}
-              variant={t === filter?.name ? 'contained' : 'outlined'}
-              onClick={() => filterTasks('category', t)}
+              variant={t === filter?.category ? 'contained' : 'outlined'}
+              onClick={() =>
+                filterTasks({
+                  category: t !== filter?.category ? t : undefined,
+                  status: filter?.status
+                })
+              }
               sx={{
                 display: 'flex',
                 flexDirection: 'column',

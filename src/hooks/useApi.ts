@@ -39,16 +39,12 @@ const dummy: Task[] = [
   }
 ];
 
+export interface Filter {
+  category: string | undefined;
+  status: string | undefined;
+}
+
 export const useMockApi = () => {
-  const delay = async (time = 50) => {
-    return new Promise<void>((resolve) => setTimeout(resolve, time));
-  };
-
-  const makeAsync = async <T>(item: T, time?: number) => {
-    await delay(time);
-    return item;
-  };
-
   const getStorage = (): Task[] => {
     const stored = localStorage.getItem('todos');
     return stored ? JSON.parse(stored) : (dummy as Task[]);
@@ -58,16 +54,23 @@ export const useMockApi = () => {
     localStorage.setItem('todos', JSON.stringify(tasks));
   };
 
+  const filterTasks = (tasks: Task[], filter: Filter) => {
+    return tasks.filter(
+      (t) =>
+        (!filter.category || filter.category === t.category) &&
+        (!filter.status || filter.status === t.status)
+    );
+  };
+
   const getTasks = useCallback(
-    async (
-      filter?: { type: keyof Task; name?: string },
-      sortedOn?: string
-    ): Promise<Task[] | undefined> => {
-      let tasks = getStorage();
-      if (filter) tasks = tasks.filter((t) => t[filter.type] === filter?.name);
-      if (sortedOn) tasks = tasks.sort();
+    async (filter?: Filter, sortedOn?: string): Promise<Task[] | undefined> => {
       try {
-        return await makeAsync(tasks);
+        const tasks = getStorage();
+        await new Promise<void>((resolve) => setTimeout(resolve, 50));
+        let fixedTasks = [...tasks];
+        if (filter) fixedTasks = filterTasks(tasks, filter);
+        if (sortedOn) fixedTasks = tasks.sort();
+        return fixedTasks;
       } catch (error: unknown) {
         console.error(error);
       }
@@ -101,71 +104,6 @@ export const useMockApi = () => {
     try {
       const tasks = getStorage().filter((t) => t.id !== id);
       setStorage(tasks);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  return { getTasks, createTask, updateTask, deleteTask };
-};
-
-export const useApi = () => {
-  const getTasks = useCallback(
-    async (filter?: string, sortedOn?: string): Promise<Task[] | undefined> => {
-      const params: { category?: string; sortBy?: string } = {};
-
-      if (filter) params.category = filter;
-      if (sortedOn) params.sortBy = sortedOn;
-
-      try {
-        const response = await fetch('/api/tasks?' + new URLSearchParams(params) + '&sortDir=desc');
-        if (!response.ok) {
-          throw new Error('Failed to fetch tasks');
-        }
-        return await response.json();
-      } catch (error: unknown) {
-        console.error(error);
-      }
-    },
-    []
-  );
-
-  const createTask = async (task: Partial<Task>): Promise<Task | undefined> => {
-    try {
-      const response = await fetch('/api/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(task)
-      });
-      return await response.json();
-    } catch (error: unknown) {
-      console.error(error);
-    }
-  };
-
-  const updateTask = async (task: Task): Promise<Task | undefined> => {
-    try {
-      const response = await fetch(`/api/tasks/${task.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(task)
-      });
-      return await response.json();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const deleteTask = async (id: number): Promise<Task | undefined> => {
-    try {
-      const response = await fetch(`/api/tasks/${id}`, {
-        method: 'DELETE'
-      });
-      return await response.json();
     } catch (error) {
       console.error(error);
     }
