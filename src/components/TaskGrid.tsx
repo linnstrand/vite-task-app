@@ -6,7 +6,7 @@ export function TaskGrid() {
   const { filterTasks, filter, taskProperties } = useTaskContext();
 
   return (
-    <Grid container spacing={2} marginY={2}>
+    <Grid container spacing={2} marginY={2} justifyContent="center">
       {taskProperties?.categories &&
         Object.keys(taskProperties.categories).map((t: string) => (
           <Grid xs={4} key={t}>

@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { TaskForm } from './components/TaskForm';
 import AddIcon from '@mui/icons-material/Add';
-import { SortMenu } from './components/SortMenu';
 import { useFormModal } from './context/useFormModal';
 import { TaskGrid } from './components/TaskGrid';
 import { TaskList } from './components/TaskList';
@@ -33,7 +32,6 @@ function App() {
       <TaskForm />
       <AppBar position="static">
         <Toolbar variant="dense">
-          <SortMenu />
           <Fab
             onClick={() => openForm()}
             color="secondary"
@@ -41,7 +39,7 @@ function App() {
             sx={{
               position: 'absolute',
               zIndex: 1,
-              top: 30,
+              top: 20,
               left: 0,
               right: 0,
               margin: '0 auto'

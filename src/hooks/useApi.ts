@@ -62,21 +62,18 @@ export const useMockApi = () => {
     );
   };
 
-  const getTasks = useCallback(
-    async (filter?: Filter, sortedOn?: string): Promise<Task[] | undefined> => {
-      try {
-        const tasks = getStorage();
-        await new Promise<void>((resolve) => setTimeout(resolve, 50));
-        let fixedTasks = [...tasks];
-        if (filter) fixedTasks = filterTasks(tasks, filter);
-        if (sortedOn) fixedTasks = tasks.sort();
-        return fixedTasks;
-      } catch (error: unknown) {
-        console.error(error);
-      }
-    },
-    []
-  );
+  const getTasks = useCallback(async (filter?: Filter): Promise<Task[] | undefined> => {
+    try {
+      const tasks = getStorage();
+      await new Promise<void>((resolve) => setTimeout(resolve, 50));
+      let fixedTasks = [...tasks];
+      if (filter) fixedTasks = filterTasks(tasks, filter);
+
+      return fixedTasks;
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  }, []);
 
   const createTask = async (task: Omit<Task, 'id'>): Promise<Task | undefined> => {
     try {

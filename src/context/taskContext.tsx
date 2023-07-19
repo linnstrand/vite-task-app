@@ -10,11 +10,9 @@ interface TaskProperties {
 export type TaskContext = {
   tasks: Task[] | undefined;
   filter: Filter | undefined;
-  sortedOn: string | undefined;
   taskProperties: TaskProperties | undefined;
   editTask: (task: Task) => void;
   addTask: (task: Omit<Task, 'id'>) => void;
-  sortTasks: (query?: string) => void;
   filterTasks: (filter: Filter) => void;
   removeTask: (id: number) => void;
 };
@@ -24,7 +22,6 @@ export const TaskContext = React.createContext<TaskContext | undefined>(undefine
 export const TaskProvider = ({ children }: { children: JSX.Element }) => {
   const [tasks, setTasks] = React.useState<Task[]>();
   const [filter, setFilter] = React.useState<Filter | undefined>();
-  const [sortedOn, setSortedOn] = React.useState<string | undefined>();
 
   // const { getTasks, updateTask, createTask, deleteTask } = useApi()
   const { getTasks, updateTask, createTask, deleteTask } = useMockApi();
@@ -46,7 +43,8 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     let loadData = true;
     async function startFetching() {
       if (!loadData) return;
-      const result = await getTasks(filter, sortedOn);
+      const result = await getTasks(filter);
+      console.log(result);
       setTasks(result);
     }
     startFetching();
@@ -54,7 +52,7 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     return () => {
       loadData = false;
     };
-  }, [filter, getTasks, sortedOn]);
+  }, [filter, getTasks]);
 
   const editTask = async (task: Task) => {
     if (!tasks) {
@@ -81,10 +79,6 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     setFilter(query);
   };
 
-  const sortTasks = async (query?: string) => {
-    setSortedOn(query);
-  };
-
   const removeTask = async (id: number) => {
     const filtered = tasks?.filter((t) => t.id !== id);
     setTasks(filtered);
@@ -96,12 +90,10 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
       value={{
         tasks,
         filter,
-        sortedOn,
         taskProperties,
         editTask,
         filterTasks,
         addTask,
-        sortTasks,
         removeTask
       }}
       children={children}
