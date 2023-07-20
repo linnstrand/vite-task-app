@@ -91,16 +91,14 @@ export const useMockApi = () => {
 
   const getTasks = useCallback(async (config?: DisplayTasksConfig): Promise<Task[] | undefined> => {
     try {
-      const tasks = getStorage();
       await new Promise<void>((resolve) => setTimeout(resolve, 50));
-      let fixedTasks = [...tasks];
+      let fixedTasks = [...getStorage()];
       if (config?.filter) {
-        fixedTasks = filterTasks(tasks, config.filter);
+        fixedTasks = filterTasks(fixedTasks, config.filter);
       }
       if (config?.sort) {
-        return sortTasks(tasks, config.sort);
+        sortTasks(fixedTasks, config.sort);
       }
-
       return fixedTasks;
     } catch (error: unknown) {
       console.error(error);
