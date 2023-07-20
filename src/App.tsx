@@ -49,7 +49,7 @@ function App() {
           </Fab>
         </Toolbar>
       </AppBar>
-      <Container component="main" sx={{ pt: { xs: 2, md: 8 }, pb: 6 }}>
+      <Container component="main" sx={{ pt: { xs: 2, md: 8 }, pb: 6, minHeight: '90vh' }}>
         <Container
           maxWidth="sm"
           sx={{

@@ -3,6 +3,8 @@ import { TaskItem } from './TaskItem';
 import { Box, List, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
+import Collapse from '@mui/material/Collapse';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 dayjs.extend(isToday);
 
@@ -18,9 +20,13 @@ export const TaskList = ({ title, tasks }: Props) => {
         {title}
       </Typography>
       <List component="div" sx={{ width: '100%' }}>
-        {tasks.map((t: Task) => (
-          <TaskItem key={t.id} task={t} isToday={dayjs(t.dueDate).isToday()} />
-        ))}
+        <TransitionGroup>
+          {tasks.map((t: Task) => (
+            <Collapse key={t.id}>
+              <TaskItem task={t} isToday={dayjs(t.dueDate).isToday()} />
+            </Collapse>
+          ))}
+        </TransitionGroup>
       </List>
     </Box>
   );

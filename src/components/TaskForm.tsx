@@ -22,30 +22,33 @@ export const TaskForm = () => {
   const { active, removeActive } = useFormModal();
   const { addTask, editTask, removeTask } = useTaskContext();
 
-  const { control, handleSubmit, formState } = useForm({
+  const { control, handleSubmit, formState, reset } = useForm({
     values: active
   });
 
   const onEdit: SubmitHandler<Task> = (data) => {
     editTask(data);
     removeActive();
+    reset();
   };
 
   const onCreate: SubmitHandler<Omit<Task, 'id'>> = (data) => {
     addTask(data);
     removeActive();
+    reset();
   };
 
   const onDelete: SubmitHandler<Task> = (task) => {
     removeTask(task.id);
     removeActive();
+    reset();
   };
 
   const onSubmit = (t: Omit<Task, 'id'> | Task) => {
     'id' in t ? onEdit(t) : onCreate(t);
   };
 
-  const task = !!active && 'id' in active && active; //isTask(active);
+  const task = !!active && 'id' in active && active;
 
   return (
     <Box display="flex" flexDirection="row" justifyContent="space-around">

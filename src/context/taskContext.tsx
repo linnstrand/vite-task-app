@@ -44,7 +44,6 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     async function startFetching() {
       if (!loadData) return;
       const result = await getTasks(filter);
-      console.log(result);
       setTasks(result);
     }
     startFetching();
