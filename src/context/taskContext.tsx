@@ -1,6 +1,6 @@
 import React from 'react';
-import { Task } from '../models';
-import { Filter, useMockApi } from '../hooks/useApi';
+import { DisplayTasksConfig, Filter, Task } from '../models';
+import { useMockApi } from '../hooks/useApi';
 
 interface TaskProperties {
   categories: { [key: string]: number };
@@ -9,10 +9,11 @@ interface TaskProperties {
 
 export type TaskContext = {
   tasks: Task[] | undefined;
-  filter: Filter | undefined;
+  config: DisplayTasksConfig | undefined;
   taskProperties: TaskProperties | undefined;
   editTask: (task: Task) => void;
   addTask: (task: Omit<Task, 'id'>) => void;
+  sortTasks: (task?: keyof Task | undefined) => void;
   filterTasks: (filter: Filter) => void;
   removeTask: (id: number) => void;
 };
@@ -21,9 +22,8 @@ export const TaskContext = React.createContext<TaskContext | undefined>(undefine
 
 export const TaskProvider = ({ children }: { children: JSX.Element }) => {
   const [tasks, setTasks] = React.useState<Task[]>();
-  const [filter, setFilter] = React.useState<Filter | undefined>();
+  const [config, setConfig] = React.useState<DisplayTasksConfig | undefined>();
 
-  // const { getTasks, updateTask, createTask, deleteTask } = useApi()
   const { getTasks, updateTask, createTask, deleteTask } = useMockApi();
 
   const taskProperties = React.useMemo(() => {
@@ -43,7 +43,7 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     let loadData = true;
     async function startFetching() {
       if (!loadData) return;
-      const result = await getTasks(filter);
+      const result = await getTasks(config);
       setTasks(result);
     }
     startFetching();
@@ -51,7 +51,7 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     return () => {
       loadData = false;
     };
-  }, [filter, getTasks]);
+  }, [config, getTasks]);
 
   const editTask = async (task: Task) => {
     if (!tasks) {
@@ -74,8 +74,11 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
   };
 
   const filterTasks = async (query: Filter) => {
-    console.log(query);
-    setFilter(query);
+    setConfig({ ...config, filter: query });
+  };
+
+  const sortTasks = async (query?: keyof Task | undefined) => {
+    setConfig({ ...config, sort: query });
   };
 
   const removeTask = async (id: number) => {
@@ -88,9 +91,10 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
     <TaskContext.Provider
       value={{
         tasks,
-        filter,
+        config,
         taskProperties,
         editTask,
+        sortTasks,
         filterTasks,
         addTask,
         removeTask

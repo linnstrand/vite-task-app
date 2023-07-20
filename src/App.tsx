@@ -15,9 +15,10 @@ import { useFormModal } from './context/useFormModal';
 import { TaskGrid } from './components/TaskGrid';
 import { TaskList } from './components/TaskList';
 import { useTaskContext } from './context/useTaskContext';
+import { SortMenu } from './components/SortMenu';
 
 function App() {
-  const { tasks, taskProperties, filterTasks, filter } = useTaskContext();
+  const { tasks, taskProperties, filterTasks, config } = useTaskContext();
   const { openForm } = useFormModal();
 
   const darkTheme = createTheme({
@@ -32,6 +33,7 @@ function App() {
       <TaskForm />
       <AppBar position="static">
         <Toolbar variant="dense">
+          <SortMenu />
           <Fab
             onClick={() => openForm()}
             color="secondary"
@@ -63,11 +65,11 @@ function App() {
             {taskProperties &&
               Object.keys(taskProperties.statoos).map((t) => (
                 <Chip
-                  variant={t === filter?.status ? 'filled' : 'outlined'}
+                  variant={t === config?.filter?.status ? 'filled' : 'outlined'}
                   onClick={() =>
                     filterTasks({
-                      status: t !== filter?.status ? t : undefined,
-                      category: filter?.category
+                      status: t !== config?.filter?.status ? t : undefined,
+                      category: config?.filter?.category
                     })
                   }
                   key={t}

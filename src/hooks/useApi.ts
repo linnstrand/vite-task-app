@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Task } from '../models';
+import { Filter, DisplayTasksConfig, Task } from '../models';
 
 const dummy: Task[] = [
   {
@@ -39,11 +39,6 @@ const dummy: Task[] = [
   }
 ];
 
-export interface Filter {
-  category: string | undefined;
-  status: string | undefined;
-}
-
 export const useMockApi = () => {
   const getStorage = (): Task[] => {
     const stored = localStorage.getItem('todos');
@@ -62,12 +57,49 @@ export const useMockApi = () => {
     );
   };
 
-  const getTasks = useCallback(async (filter?: Filter): Promise<Task[] | undefined> => {
+  const sortTasks = (tasks: Task[], prop: keyof Task) => {
+    switch (prop) {
+      case 'dueDate':
+        return tasks.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+      case 'name':
+        return tasks.sort((a, b) => {
+          const nameA = a.name.toUpperCase();
+          const nameB = b.name.toUpperCase();
+          if (nameA < nameB) {
+            return -1;
+          }
+          if (nameA > nameB) {
+            return 1;
+          }
+          return 0;
+        });
+      case 'status':
+        return tasks.sort((a, b) => {
+          if (b.status === 'doing' || (b.status === 'todo' && a.status === 'done')) {
+            return 1;
+          }
+          if (b.status === 'done' && a.status !== 'done') {
+            return -1;
+          }
+          return 0;
+        });
+
+      default:
+        throw new Error(`Sorting on ${prop} is not implemented`);
+    }
+  };
+
+  const getTasks = useCallback(async (config?: DisplayTasksConfig): Promise<Task[] | undefined> => {
     try {
       const tasks = getStorage();
       await new Promise<void>((resolve) => setTimeout(resolve, 50));
       let fixedTasks = [...tasks];
-      if (filter) fixedTasks = filterTasks(tasks, filter);
+      if (config?.filter) {
+        fixedTasks = filterTasks(tasks, config.filter);
+      }
+      if (config?.sort) {
+        return sortTasks(tasks, config.sort);
+      }
 
       return fixedTasks;
     } catch (error: unknown) {

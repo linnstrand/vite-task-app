@@ -4,7 +4,7 @@ import { Box, List, Typography } from '@mui/material';
 import dayjs from 'dayjs';
 import isToday from 'dayjs/plugin/isToday';
 import Collapse from '@mui/material/Collapse';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { TransitionGroup } from 'react-transition-group';
 
 dayjs.extend(isToday);
 

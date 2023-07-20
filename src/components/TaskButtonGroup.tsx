@@ -23,12 +23,12 @@ export const ButtonSelect = ({
   const anchorRef = React.useRef<HTMLButtonElement>(null);
 
   const handleMenuItemClick = (option: string) => {
-    setOpen(false);
     onChange(option);
+    setOpen(false);
   };
 
   const handleClose = (event: Event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+    if (anchorRef.current?.contains(event.target as HTMLElement)) {
       return;
     }
     setOpen(false);

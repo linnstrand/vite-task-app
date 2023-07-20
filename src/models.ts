@@ -13,3 +13,13 @@ export interface Task {
 //   DONE = 'done'
 // }
 export const statoos = ['todo', 'doing', 'done'] as const;
+
+export interface DisplayTasksConfig {
+  filter?: Filter;
+  sort?: keyof Task;
+}
+
+export interface Filter {
+  category: string | undefined;
+  status: string | undefined;
+}
