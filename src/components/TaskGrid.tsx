@@ -50,7 +50,6 @@ export function TaskGrid() {
       {hidden.length > 0 && (
         <Grid xs={2}>
           <ButtonSelect options={hidden} onChange={applyFilter} />
-          {/* <SortMenu applyFilter={applyFilter} items={hidden} /> */}
         </Grid>
       )}
     </Grid>

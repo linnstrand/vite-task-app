@@ -6,6 +6,8 @@ import { Task } from '../models';
 
 export const SortMenu = () => {
   const { sortTasks, config } = useTaskContext();
+
+  // handling of anchorEl is from MUI documentation
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 

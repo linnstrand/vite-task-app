@@ -12,7 +12,7 @@ export type TaskContext = {
   config: DisplayTasksConfig | undefined;
   taskProperties: TaskProperties | undefined;
   editTask: (task: Task) => void;
-  addTask: (task: Omit<Task, 'id'>) => void;
+  addTask: (task: Omit<Task, 'id'>) => void; // Making it clear ID is excluded on purpose
   sortTasks: (task?: keyof Task | undefined) => void;
   filterTasks: (filter: Filter) => void;
   removeTask: (id: number) => void;
@@ -24,8 +24,11 @@ export const TaskProvider = ({ children }: { children: JSX.Element }) => {
   const [tasks, setTasks] = React.useState<Task[]>();
   const [config, setConfig] = React.useState<DisplayTasksConfig | undefined>();
 
+  // TaskContext should ideally be the only consumer of api hook.
   const { getTasks, updateTask, createTask, deleteTask } = useMockApi();
 
+  // I am working with a limited backend in this scenario.
+  // Here is how I work around it to show user more information
   const taskProperties = React.useMemo(() => {
     if (!tasks) return;
     const data: TaskProperties = {
